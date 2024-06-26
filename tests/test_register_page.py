@@ -1,30 +1,70 @@
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-import time
+from faker import Faker
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as ec
+from locators import Locators
+from constants import Constants
 
-driver = webdriver.Chrome()
+# добавляем модули без них фикстуры не подгружаются
+from confest import driver
+from confest import login
 
-# Переход на страницу регистрации
-driver.get("https://stellarburgers.nomoreparties.site/register")
+# Инициализация объекта фейкера
+faker = Faker()
 
-# Ожидание загрузки страницы
-time.sleep(5)
 
-# Определение локаторов
-# Ввод данных в поле для ввода имени
-driver.find_element(By.XPATH, "//label[contains(text(), 'Имя')]/..//input").send_keys("tester")
+class TestStellarBurgersRegiter:
 
-# Ввод данных в поле для ввода email
-driver.find_element(By.XPATH, "//label[contains(text(), 'Email')]/..//input").send_keys("test_testov_1_1@domain.ru")
+    # Тест проверяющий функционал регистрации
+    def test_registration_positive(self, driver):
+        # добавление прерывания между командами вебдрайвера
+        driver.implicitly_wait(4)
 
-# Ввод данных в поле для ввода пароля
-driver.find_element(By.XPATH, "//label[contains(text(), 'Пароль')]/..//input").send_keys("passw0rd")
+        # Создаем фейковый уникальный имейл для регистрации
+        email = faker.email()
 
-# Нажатие на кнопку регистрации
-driver.find_element(By.XPATH, "//button[contains(text(), 'Зарегистрироваться')]").click()
+        # Жмем кнопку Войти в аккаунт на главной странице
+        WebDriverWait(driver, 5).until(ec.visibility_of_element_located((Locators.SIGN_IN_BUTTON))).click()
+        # Переходим по ссылке Зарегистрироваться
+        WebDriverWait(driver, 5).until(ec.visibility_of_element_located((Locators.REGISTER_LINK))).click()
+        # Отправляем логин в поле Имя
+        driver.find_element(*Locators.REGISTER_LOGIN).send_keys("tester")
+        # Отправляем созданный уникальный имейл в поле Email
+        driver.find_element(*Locators.REGISTER_EMAIL).send_keys(email)
+        # Отправляем пароль из констант в поле Пароль
+        driver.find_element(*Locators.REGISTER_PASSWORD).send_keys(Constants.PASSWORD)
+        # Нажимаем на кнопку Зарегистрироваться
+        driver.find_element(*Locators.AUTH_BUTTON).click()
 
-# Ожидание загрузки страницы после регистрации
-time.sleep(5)
+    # Проверяем регистрацию
+    def test_login(self, login):
+        # Передаем результаты работы модуля login
+        driver = login
+        # Получаем содержимое value поля Email
+        email = WebDriverWait(driver, 5).until(ec.visibility_of_element_located((Locators.PERSONAL_ACCOUNT_EMAIL))).get_attribute("value")
+        # Сравниваем содержимое value поля Email и константу с Email
+        assert email == Constants.EMAIL
 
-# Закрытие браузера
-driver.quit()
+    # Проверяем ошибку при некорректном пароле
+    def test_registration_error_password(self, driver):
+        # добавление прерывания между командами вебдрайвера
+        driver.implicitly_wait(4)
+
+        # Создаем фейковый уникальный имейл для регистрации
+        email = faker.email()
+
+        # Жмем кнопку Войти в аккаунт на главной странице
+        WebDriverWait(driver, 5).until(ec.visibility_of_element_located((Locators.SIGN_IN_BUTTON))).click()
+        # Переходим по ссылке Зарегистрироваться
+        WebDriverWait(driver, 5).until(ec.visibility_of_element_located((Locators.REGISTER_LINK))).click()
+        # Отправляем логин в поле Имя
+        driver.find_element(*Locators.REGISTER_LOGIN).send_keys("tester")
+        # Отправляем созданный уникальный имейл в поле Email
+        driver.find_element(*Locators.REGISTER_EMAIL).send_keys(email)
+        # Отправляем некорректный пароль из констант в поле Пароль
+        driver.find_element(*Locators.REGISTER_PASSWORD).send_keys(Constants.INCORRECT_PASSWORD)
+        # Жмем кнопку Зарегистрироваться
+        driver.find_element(*Locators.AUTH_BUTTON).click()
+        # Получаем текст ошибки если она есть
+        error = WebDriverWait(driver, 5).until(ec.visibility_of_element_located((Locators.REGISTER_PASSWORD_ERROR_MESSAGE))).text
+        # Сравниваем текст ошибки с константой которая была скопирована со страницы
+        assert error == Constants.INCORRECT_PASSWORD_ERROR_MESSAGE

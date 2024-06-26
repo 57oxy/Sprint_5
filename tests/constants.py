@@ -1,0 +1,12 @@
+class Constants:
+    URL = 'https://stellarburgers.nomoreparties.site/'
+    EMAIL = 'marialawson@example.net'
+    PASSWORD = '123456'
+    INCORRECT_PASSWORD = '12345'
+    INCORRECT_PASSWORD_ERROR_MESSAGE = 'Некорректный пароль'
+    PASS_RECOVERY_PAGE_LABEL = 'Восстановление пароля'
+    CONSTRUCTOR_LABEL = 'Соберите бургер'
+    LOG_OUT_LABEL = 'Вход'
+    SAUCES_LINK_ACTIVE = 'tab_tab__1SPyG tab_tab_type_current__2BEPc pt-4 pr-10 pb-4 pl-10 noselect'
+    FILLINGS_LINK_ACTIVE = 'tab_tab__1SPyG tab_tab_type_current__2BEPc pt-4 pr-10 pb-4 pl-10 noselect'
+    BREADS_LINK_ACTIVE = 'tab_tab__1SPyG tab_tab_type_current__2BEPc pt-4 pr-10 pb-4 pl-10 noselect'

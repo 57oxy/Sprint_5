@@ -1,30 +1,41 @@
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-import time
+from faker import Faker
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as ec
+from locators import Locators
+from constants import Constants
+from confest import driver
+from confest import login
 
-driver = webdriver.Chrome()
 
-# Переход на страницу регистрации
-driver.get("https://stellarburgers.nomoreparties.site/register")
+faker = Faker()
 
-# Ожидание загрузки страницы
-time.sleep(5)
 
-# Определение локаторов
-# Ввод данных в поле для ввода имени
-driver.find_element(By.XPATH, "//label[contains(text(), 'Имя')]/..//input").send_keys("tester")
+class TestStellarBurgersRegiter:
 
-# Ввод данных в поле для ввода email
-driver.find_element(By.XPATH, "//label[contains(text(), 'Email')]/..//input").send_keys("test_testov_1_1@domain.ru")
+    def test_registration_positive(self, driver):
+        driver.implicitly_wait(4)
+        email = faker.email()
+        WebDriverWait(driver, 5).until(ec.visibility_of_element_located((Locators.SIGN_IN_BUTTON))).click()
+        WebDriverWait(driver, 5).until(ec.visibility_of_element_located((Locators.REGISTER_LINK))).click()
+        driver.find_element(*Locators.REGISTER_LOGIN).send_keys("tester")
+        driver.find_element(*Locators.REGISTER_EMAIL).send_keys(email)
+        driver.find_element(*Locators.REGISTER_PASSWORD).send_keys(Constants.PASSWORD)
+        driver.find_element(*Locators.AUTH_BUTTON).click()
+        WebDriverWait(driver, 5)
 
-# Ввод данных в поле для ввода пароля
-driver.find_element(By.XPATH, "//label[contains(text(), 'Пароль')]/..//input").send_keys("passw0rd")
+    def test_login(self, login):
+        driver = login
+        email = WebDriverWait(driver, 5).until(ec.visibility_of_element_located((Locators.PERSONAL_ACCOUNT_EMAIL))).get_attribute("value")
+        assert email == Constants.EMAIL
 
-# Нажатие на кнопку регистрации
-driver.find_element(By.XPATH, "//button[contains(text(), 'Зарегистрироваться')]").click()
-
-# Ожидание загрузки страницы после регистрации
-time.sleep(5)
-
-# Закрытие браузера
-driver.quit()
+    def test_registration_error_password(self, driver):
+        driver.implicitly_wait(4)
+        email = faker.email()
+        WebDriverWait(driver, 5).until(ec.visibility_of_element_located((Locators.SIGN_IN_BUTTON))).click()
+        WebDriverWait(driver, 5).until(ec.visibility_of_element_located((Locators.REGISTER_LINK))).click()
+        driver.find_element(*Locators.REGISTER_LOGIN).send_keys("tester")
+        driver.find_element(*Locators.REGISTER_EMAIL).send_keys(email)
+        driver.find_element(*Locators.REGISTER_PASSWORD).send_keys(Constants.INCORRECT_PASSWORD)
+        driver.find_element(*Locators.AUTH_BUTTON).click()
+        error = WebDriverWait(driver, 5).until(ec.visibility_of_element_located((Locators.REGISTER_PASSWORD_ERROR_MESSAGE))).text
+        assert error == Constants.INCORRECT_PASSWORD_ERROR_MESSAGE

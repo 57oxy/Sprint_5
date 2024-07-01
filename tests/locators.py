@@ -21,14 +21,14 @@ class Locators:
 
     # Страница регистрации
     REGISTER_LINK = (By.XPATH, "//a[@href='/register']")
-    REGISTER_LOGIN = (By.XPATH, "//form//input[1]")
-    REGISTER_EMAIL = (By.XPATH, "//form/fieldset[2]//input")
-    REGISTER_PASSWORD = (By.XPATH, "//form/fieldset[3]//input")
+    REGISTER_LOGIN = (By.XPATH, "//label[contains(text(), 'Имя')]/..//input")
+    REGISTER_EMAIL = (By.XPATH, "//label[contains(text(), 'Email')]/..//input")
+    REGISTER_PASSWORD = (By.XPATH, "//label[contains(text(), 'Пароль')]/..//input")
     REGISTER_PASSWORD_ERROR_MESSAGE = (By.XPATH, "//p[@class='input__error text_type_main-default']")
 
     # Страница личного кабинета
     PERSONAL_ACCOUNT_BUTTON = (By.XPATH, "//nav//a[@href='/account']")
-    PERSONAL_ACCOUNT_EMAIL = (By.XPATH, "//main//li[2]//input")
+    PERSONAL_ACCOUNT_EMAIL = (By.XPATH, "//input[@value='marialawson@example.net']")
     LOG_OUT_BUTTON = (By.XPATH, "//button[@class='Account_button__14Yp3 text text_type_main-medium text_color_inactive']")
     LOG_OUT_LABEL = (By.XPATH, "//h2")
     LOGO_LINK = (By.XPATH, "//nav//div/a[@href='/']")
@@ -36,6 +36,6 @@ class Locators:
     # Страница конструктора
     CONSTRUCTOR_LINK = (By.XPATH, "//nav//a[@class='AppHeader_header__link__3D_hX']")
     CONSTRUCTOR_LABEL = (By.XPATH, "//h1")
-    SAUCES_LINK_ACTIVE = (By.XPATH, "//main//div[2]")
-    FILLINGS_LINK_ACTIVE = (By.XPATH, "//main//div[3]")
-    BREADS_LINK_ACTIVE = (By.XPATH, "//main//div/div")
+    SAUCES_LINK_ACTIVE = (By.XPATH, "//div[span[contains(text(), 'Соусы')]]")
+    FILLINGS_LINK_ACTIVE = (By.XPATH, "//div[span[contains(text(), 'Начинки')]]")
+    BREADS_LINK_ACTIVE = (By.XPATH, "//div[span[contains(text(), 'Булки')]]")

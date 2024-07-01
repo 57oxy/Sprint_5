@@ -16,8 +16,6 @@ class TestStellarBurgersRegiter:
 
     # Тест проверяющий функционал регистрации
     def test_registration_positive(self, driver):
-        # добавление прерывания между командами вебдрайвера
-        driver.implicitly_wait(4)
 
         # Создаем фейковый уникальный имейл для регистрации
         email = faker.email()
@@ -46,8 +44,6 @@ class TestStellarBurgersRegiter:
 
     # Проверяем ошибку при некорректном пароле
     def test_registration_error_password(self, driver):
-        # добавление прерывания между командами вебдрайвера
-        driver.implicitly_wait(4)
 
         # Создаем фейковый уникальный имейл для регистрации
         email = faker.email()
